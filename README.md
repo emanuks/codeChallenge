@@ -1,9 +1,13 @@
 ### Code Challenge
 
-To run the challenge execute this on terminal
+First run the installer
+
 `bundle install`
+
+To run the challenge execute this on terminal
+
 `ruby -r ./shopping_basket.rb -e "ShoppingBasket.new.run"`
 
 To run the tests execute this on terminal
-`bundle install`
+
 `rspec spec/shopping_basket_spec.rb`
