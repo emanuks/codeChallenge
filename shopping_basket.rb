@@ -10,10 +10,10 @@ class ShoppingBasket
 
       product = get_product
 
-      original_value = get_original_value
+      original_value = get_original_value(product)
       product.sub! " at #{original_value}", ""
       
-      quantity = get_quantity
+      quantity = get_quantity(product)
 
       product_value = original_value.to_f.round(2)
 
@@ -32,7 +32,7 @@ class ShoppingBasket
       
       products.push({:name => product, :value => product_value})
 
-      break if add_another_product == "N"
+      break if add_another_product? == "N"
     end
 
     products.each do |product|
