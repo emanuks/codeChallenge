@@ -8,37 +8,31 @@ class ShoppingBasket
       import_tax = 0
       basic_tax = 0
 
-      puts "Please enter the product name and price:"
-      product = gets.chop
+      product = get_product
 
-      original_value = product.split(" ").last
+      original_value = get_original_value
       product.sub! " at #{original_value}", ""
-      quantity = product.split(" ").first.to_i
+      
+      quantity = get_quantity
 
       product_value = original_value.to_f.round(2)
 
-      is_imported = product.upcase.include?("IMPORTED")
+      is_imported = is_imported?(product)
 
-      if is_imported
-        import_tax = ((original_value.to_f * 0.05 * 20).round) / 20.0
-        product_value = (original_value.to_f + import_tax).round(2)
-        totalTax += (import_tax * quantity).round(2)
-      end
+      import_tax = calc_import_tax(original_value) if is_imported
 
-      is_exempt = product.upcase.include?("BOOK") || product.upcase.include?("CHOCOLATE") || product.upcase.include?("PILLS")
+      is_exempt = is_exempt?(product)
 
-      unless is_exempt
-        basic_tax = ((original_value.to_f * 0.1 * 20).round) / 20.0
-        product_value = (product_value + basic_tax).round(2)
-        totalTax += (basic_tax * quantity).round(2)
-      end
+      basic_tax = calc_basic_tax(original_value) unless is_exempt
+      
+      totalTax += ((import_tax + basic_tax) * quantity).round(2)
 
-      product_value = (product_value * quantity).to_f.round(2)
+      product_value = ((product_value + basic_tax + import_tax) * quantity).to_f.round(2)
       total += product_value
+      
       products.push({:name => product, :value => product_value})
 
-      puts "Do you want to add another product? [Y/N]"
-      break if gets.chop.upcase == "N" 
+      break if add_another_product == "N"
     end
 
     products.each do |product|
@@ -46,5 +40,39 @@ class ShoppingBasket
     end
     puts "Sales Taxes: #{totalTax}"
     puts "Total: #{total.round(2)}"
+  end
+  
+  def is_imported?(product)
+    product.upcase.include?("IMPORTED")
+  end
+
+  def is_exempt?(product)
+    product.upcase.include?("BOOK") || product.upcase.include?("CHOCOLATE") || product.upcase.include?("PILLS")
+  end
+
+  def calc_basic_tax(original_value)
+    ((original_value.to_f * 0.1 * 20).round) / 20.0
+  end
+  
+  def calc_import_tax(original_value)
+    ((original_value.to_f * 0.05 * 20).round) / 20.0
+  end
+  
+  def get_product
+      puts "Please enter the product name and price:"
+      gets.chop
+  end
+  
+  def add_another_product?
+      puts "Do you want to add another product? [Y/N]"
+      gets.chop.upcase 
+  end
+  
+  def get_original_value(product)
+    product.split(" ").last
+  end
+  
+  def get_quantity(product)
+    product.split(" ").first.to_i
   end
 end
